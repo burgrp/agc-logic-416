@@ -1,0 +1,55 @@
+{
+    "mqttBroker": "-> $MQTT",
+    "persistent": {
+        "module": "./persistent.js",
+        "mqttBroker": "-> mqttBroker",
+        "directory": "-> $.DATA || './data'",
+        "registers": [
+            "zone.list"
+        ]
+    },
+    "controllers": {
+        "module": "./controllers.js",
+        "mqttBroker": "-> mqttBroker",
+        "modules": {
+            "pumpFloor": {
+                "input": {
+                    "zoneValves": [
+                        "zone.lounge.valve.floor",
+                        "zone.bathRoomF1.valve.floor",
+                        "zone.hall.valve.floor",
+                        "zone.bathRoomF2.valve.floor"
+                    ]
+                },
+                "output": {
+                    "pump": "mix.floor.pump"
+                },
+                "logic": {
+                    "module": "./logic-mix-pump.js"
+                }
+            },
+            "pumpRad": {
+                "input": {
+                    "zoneValves": [
+                        "zone.lounge.valve.rad",
+                        "zone.bathRoomF1.valve.rad",
+                        "zone.guestRoom.valve.rad",
+                        "zone.bedRoom.valve.rad",
+                        "zone.hall.valve.rad",
+                        "zone.chRoomWest.valve.rad",
+                        "zone.atelier.valve.rad",
+                        "zone.lab.valve.rad",
+                        "zone.chRoomEast.valve.rad",
+                        "zone.bathRoomF2.valve.rad"
+                    ]
+                },
+                "output": {
+                    "pump": "mix.rad.pump"
+                },
+                "logic": {
+                    "module": "./logic-mix-pump.js"
+                }
+            }
+        }
+    }
+}
