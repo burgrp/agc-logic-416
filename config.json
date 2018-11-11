@@ -50,6 +50,19 @@
             }
         ],
         "modules": {
+            "hotWaterByHeating": {
+                "input": {
+                    "heatingTemp": "electricHeater.temp",
+                    "hotWaterTemp": "hotWaterBoiler.temp",
+                    "hotWaterTarget": "hotWaterBoiler.target"
+                },
+                "output": {
+                    "pump": "pump.hotWater"
+                },
+                "logic": {
+                    "module": "./hot-water-by-heating.js"
+                }
+            },
             "pump.floor": {
                 "input": {
                     "zoneValves": [
