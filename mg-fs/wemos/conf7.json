@@ -1,0 +1,7 @@
+{
+    "ssr8": {
+        "led": {
+            "name": "wemos.led"
+        }
+    }
+}

@@ -1,0 +1,16 @@
+{
+    "mix": {
+        "channel0": {
+            "prefix": "mix.rad."
+        },
+        "channel1": {
+            "prefix": "mix.floor."
+        },
+        "gpo0": {
+            "name": "mix.gpo0"
+        },
+        "gpo1": {
+            "name": "pump.hotWater"
+        }
+    }
+}
