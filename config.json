@@ -5,14 +5,52 @@
         "mqttBroker": "-> mqttBroker",
         "directory": "-> $.DATA || './data'",
         "registers": [
-            "zone.list"
+            "zone.lounge.manual.rad",
+            "zone.bathRoomF1.manual.rad",
+            "zone.guestRoom.manual.rad",
+            "zone.bedRoom.manual.rad",
+            "zone.hall.manual.rad",
+            "zone.chRoomWest.manual.rad",
+            "zone.atelier.manual.rad",
+            "zone.lab.manual.rad",
+            "zone.chRoomEast.manual.rad",
+            "zone.bathRoomF2.manual.rad",
+            "zone.lounge.manual.floor",
+            "zone.bathRoomF1.manual.floor",
+            "zone.hall.manual.floor",
+            "zone.bathRoomF2.manual.floor"
         ]
     },
     "controllers": {
         "module": "./controllers.js",
         "mqttBroker": "-> mqttBroker",
+        "factories": [
+            {
+                "module": "./manual-zones.js",
+                "map": {
+                    "rad": [
+                        "lounge",
+                        "bathRoomF1",
+                        "hall",
+                        "guestRoom",
+                        "bedRoom",
+                        "chRoomWest",
+                        "atelier",
+                        "bathRoomF2",
+                        "lab",
+                        "chRoomEast"
+                    ],
+                    "floor": [
+                        "lounge",
+                        "bathRoomF1",
+                        "hall",
+                        "bathRoomF2"
+                    ]
+                }
+            }
+        ],
         "modules": {
-            "pumpFloor": {
+            "pump.floor": {
                 "input": {
                     "zoneValves": [
                         "zone.lounge.valve.floor",
@@ -28,7 +66,7 @@
                     "module": "./logic-mix-pump.js"
                 }
             },
-            "pumpRad": {
+            "pump.rad": {
                 "input": {
                     "zoneValves": [
                         "zone.lounge.valve.rad",
@@ -38,9 +76,9 @@
                         "zone.hall.valve.rad",
                         "zone.chRoomWest.valve.rad",
                         "zone.atelier.valve.rad",
+                        "zone.bathRoomF2.valve.rad",
                         "zone.lab.valve.rad",
-                        "zone.chRoomEast.valve.rad",
-                        "zone.bathRoomF2.valve.rad"
+                        "zone.chRoomEast.valve.rad"
                     ]
                 },
                 "output": {

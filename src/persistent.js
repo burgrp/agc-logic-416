@@ -1,6 +1,7 @@
 const mqtt = require("mqtt");
 const fs = require("fs");
 const os = require("os");
+const deepEqual = require("fast-deep-equal");
 
 const pro = require("util").promisify;
 const fsReadFileAsync = pro(fs.readFile);
@@ -10,7 +11,7 @@ module.exports = async config => {
 
     let client = mqtt.connect(`mqtt://${config.mqttBroker}`);
     let hostName = os.hostname();
-    
+
     let regValues = {};
 
     function advertise() {
@@ -27,16 +28,34 @@ module.exports = async config => {
     client.subscribe("register/advertise!");
 
     for (let regName of config.registers) {
-        try {
-            let strVal = (await fsReadFileAsync(`${config.directory}/${regName}.json`)).toString();
-            regValues[regName] = strVal === ""? undefined: JSON.parse(strVal);
-        } catch (e) {
-            if (e.code !== "ENOENT") {
-                console.error(`Error reading register ${regName}`, e);
+
+        let fileName = `${config.directory}/${regName}.json`;
+
+        async function readFile() {
+            try {
+                let strVal = (await fsReadFileAsync(fileName)).toString();
+                let val = strVal === "" ? undefined : JSON.parse(strVal);
+                if (!deepEqual(val, regValues[regName])) {
+                    regValues[regName] = val;
+                    publishRegValue(regName);
+                }
+            } catch (e) {
+                if (e.code === "ENOENT") {
+                    await fsWriteFileAsync(fileName, "");
+                } else {
+                    console.error(`Error reading register ${regName}`, e);
+                }
             }
         }
+
+        await readFile();
+
+        fs.watch(fileName, { persistent: false }, eventType => {
+            readFile();
+        });
+
         client.subscribe(`register/${regName}/get`);
-        client.subscribe(`register/${regName}/set`);        
+        client.subscribe(`register/${regName}/set`);
     }
 
     function publishRegValue(regName) {
@@ -44,10 +63,8 @@ module.exports = async config => {
     }
 
     async function setRegValue(regName, strValue) {
-        let value = strValue === ""? undefined: JSON.parse(strValue);
-        await fsWriteFileAsync(`${config.directory}/${regName}.json`, value === undefined? "": JSON.stringify(value));
-        regValues[regName] = value;
-        publishRegValue(regName);
+        let value = strValue === "" ? undefined : JSON.parse(strValue);
+        await fsWriteFileAsync(`${config.directory}/${regName}.json`, value === undefined ? "" : JSON.stringify(value));
     }
 
     client.on("message", (topic, message) => {

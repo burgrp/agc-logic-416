@@ -1,10 +1,16 @@
 const mqttRegister = require("@device.farm/mqtt-reg").mqttReg;
 
-module.exports = config => {
+module.exports = async config => {
 
-    for (let moduleName in config.modules) {
+    let allModules = {...config.modules};
+
+    for (let factory of config.factories) {
+        await factory(allModules);
+    }
+
+    for (let moduleName in allModules) {
         console.info("Initializing controller module", moduleName);
-        let module = config.modules[moduleName];
+        let module = allModules[moduleName];
 
         let input = {};
         let output = {};
@@ -15,6 +21,7 @@ module.exports = config => {
             outputRegs[outputName] = mqttRegister(config.mqttBroker, regName, actual => {
                 output[outputName] = actual;
             });
+            outputRegs[outputName].name = regName;
         }
 
         for (let inputName in module.input) {
@@ -41,9 +48,9 @@ module.exports = config => {
 
                     for (let outputName in output) {
                         let value = output[outputName];
-                        console.info(`${moduleName}: O ${regName} ${value}`);
                         let reg = outputRegs[outputName];
                         if (reg) {
+                            console.info(`${moduleName}: O ${reg.name} ${value}`);
                             reg.set(value);
                         } else {
                             console.error(`${moduleName} has no output ${outputName}`);
