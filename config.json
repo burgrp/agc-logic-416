@@ -3,7 +3,7 @@
     "persistent": {
         "module": "./persistent.js",
         "mqttBroker": "-> mqttBroker",
-        "directory": "-> $.DATA || './data'",
+        "directory": "-> $.DATA_DIR || './data'",
         "registers": [
             "zone.lounge.manual.rad",
             "zone.bathRoomF1.manual.rad",
