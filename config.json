@@ -1,7 +1,15 @@
 {
     "mqttBroker": "-> $MQTT",
+    "variable": {
+        "module": "./vireg.js",
+        "mqttBroker": "-> mqttBroker",
+        "registers": [
+            "heating.mode",
+            "heating.required"
+        ]
+    },
     "persistent": {
-        "module": "./persistent.js",
+        "module": "./vireg.js",
         "mqttBroker": "-> mqttBroker",
         "directory": "-> $.DATA_DIR || './data'",
         "registers": [

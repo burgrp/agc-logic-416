@@ -9,6 +9,8 @@ const fsWriteFileAsync = pro(fs.writeFile);
 
 module.exports = async config => {
 
+    let persistent = config.directory !== undefined;
+
     let client = mqtt.connect(`mqtt://${config.mqttBroker}`);
     let hostName = os.hostname();
 
@@ -23,36 +25,39 @@ module.exports = async config => {
     }
 
     client.on("connect", advertise);
-    setInterval(advertise, 10000);
 
     client.subscribe("register/advertise!");
 
     for (let regName of config.registers) {
 
-        let fileName = `${config.directory}/${regName}.json`;
+        if (persistent) {
 
-        async function readFile() {
-            try {
-                let strVal = (await fsReadFileAsync(fileName)).toString();
-                let val = strVal === "" ? undefined : JSON.parse(strVal);
-                if (!deepEqual(val, regValues[regName])) {
-                    regValues[regName] = val;
-                    publishRegValue(regName);
-                }
-            } catch (e) {
-                if (e.code === "ENOENT") {
-                    await fsWriteFileAsync(fileName, "");
-                } else {
-                    console.error(`Error reading register ${regName}`, e);
+            let fileName = `${config.directory}/${regName}.json`;
+
+            async function readFile() {
+                try {
+                    let strVal = (await fsReadFileAsync(fileName)).toString();
+                    let val = strVal === "" ? undefined : JSON.parse(strVal);
+                    if (!deepEqual(val, regValues[regName])) {
+                        regValues[regName] = val;
+                        publishRegValue(regName);
+                    }
+                } catch (e) {
+                    if (e.code === "ENOENT") {
+                        await fsWriteFileAsync(fileName, "");
+                    } else {
+                        console.error(`Error reading register ${regName}`, e);
+                    }
                 }
             }
+
+            await readFile();
+
+            fs.watch(fileName, { persistent: false }, eventType => {
+                readFile();
+            });
+
         }
-
-        await readFile();
-
-        fs.watch(fileName, { persistent: false }, eventType => {
-            readFile();
-        });
 
         client.subscribe(`register/${regName}/get`);
         client.subscribe(`register/${regName}/set`);
@@ -64,7 +69,12 @@ module.exports = async config => {
 
     async function setRegValue(regName, strValue) {
         let value = strValue === "" ? undefined : JSON.parse(strValue);
-        await fsWriteFileAsync(`${config.directory}/${regName}.json`, value === undefined ? "" : JSON.stringify(value));
+        if (persistent) {
+            await fsWriteFileAsync(`${config.directory}/${regName}.json`, value === undefined ? "" : JSON.stringify(value));
+        } else {
+            regValues[regName] = value;
+            publishRegValue(regName);
+        }       
     }
 
     client.on("message", (topic, message) => {
