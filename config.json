@@ -60,7 +60,8 @@
         "modules": {
             "hotWaterByHeating": {
                 "input": {
-                    "heatingTemp": "electricHeater.temp",
+                    "accuTemp": "electricHeater.temp",
+                    "heatPumpOutTemp": "nanook.hotWaterOutTemp",
                     "hotWaterTemp": "hotWaterBoiler.temp",
                     "hotWaterTarget": "hotWaterBoiler.target"
                 },
