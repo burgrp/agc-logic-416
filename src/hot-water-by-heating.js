@@ -5,8 +5,9 @@ module.exports = config => {
             let actualToCompare = input.hotWaterTemp + (output.pump ? -1 : 1);
             output.pump =
                 input.enabled &&
-                heatingTemp > actualToCompare + 10 &&
-                input.hotWaterTarget > actualToCompare;
+                heatingTemp > actualToCompare + 8
+                //  &&
+                // input.hotWaterTarget > actualToCompare;
         }
     }
 }
