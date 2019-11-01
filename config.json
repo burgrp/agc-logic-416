@@ -64,7 +64,6 @@
                     "accuTemp": "electricHeater.temp",
                     "heatPumpOutTemp": "nanook.hotWaterOutTemp",
                     "hotWaterTemp": "hotWaterBoiler.temp",
-                    "hotWaterTarget": "hotWaterBoiler.target",
                     "enabled": "hotWaterBoiler.byHeating"
                 },
                 "output": {

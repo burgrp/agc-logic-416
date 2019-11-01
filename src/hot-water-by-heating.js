@@ -6,8 +6,5 @@ module.exports = config => {
         output.pump =
             input.enabled &&
             heatingTemp > actualToCompare + 5
-        //  &&
-        // input.hotWaterTarget > actualToCompare;
-
     }
 }
