@@ -26,7 +26,8 @@
             "zone.lounge.manual.floor",
             "zone.bathRoomF1.manual.floor",
             "zone.hall.manual.floor",
-            "zone.bathRoomF2.manual.floor"
+            "zone.bathRoomF2.manual.floor",
+            "hotWaterBoiler.byHeating"
         ]
     },
     "controllers": {
@@ -63,7 +64,8 @@
                     "accuTemp": "electricHeater.temp",
                     "heatPumpOutTemp": "nanook.hotWaterOutTemp",
                     "hotWaterTemp": "hotWaterBoiler.temp",
-                    "hotWaterTarget": "hotWaterBoiler.target"
+                    "hotWaterTarget": "hotWaterBoiler.target",
+                    "enabled": "hotWaterBoiler.byHeating"
                 },
                 "output": {
                     "pump": "pump.hotWater"
